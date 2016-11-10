@@ -1,6 +1,8 @@
 var ctx = document.getElementById('main').getContext('2d');
+var falling = true;
+
 var map = [
-	[1,0,0,0,0,0,0,0,0,1],
+	[2,2,0,0,0,0,0,0,0,1],
 	[0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0],
@@ -13,9 +15,28 @@ var map = [
 	[0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,2,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0],
-	[1,0,0,0,0,0,0,0,0,1],
+	[0,0,0,0,0,0,0,0,0,0],
+	[2,2,2,2,2,2,2,2,2,2],
+];
+
+var mapCopy = [
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0],
 ];
 
 var block = [
@@ -32,7 +53,11 @@ var oorsprong = {
 setInterval(gameLoop, 1500/*60*/);
 function gameLoop ()
 {
+	clear();
+	copyMapCopy();
 	drawMap();
+	checkCollision();
+	copyMap();
 	move();	
 };
 			
@@ -59,18 +84,48 @@ function drawMap ()
 		};
 	};
 };
+
+function copyMap ()
+{
+	for (var copyMap1 = 0; copyMap1 < map.length; copyMap1++)
+	{
+		for (var copyMap2 = 0; copyMap2 < map[copyMap1].length; copyMap2++) 
+		{
+			if (map[copyMap1][copyMap2] === 2)
+			{
+				mapCopy[copyMap1][copyMap2] = map[copyMap1][copyMap2];
+			};		
+		};
+	};	
+};
+
+function copyMapCopy ()
+{
+	for (var copyMap1 = 0; copyMap1 < map.length; copyMap1++)
+	{
+		for (var copyMap2 = 0; copyMap2 < map[copyMap1].length; copyMap2++) 
+		{
+			if (mapCopy[copyMap1][copyMap2] === 2)
+			{
+				map[copyMap1][copyMap2] = mapCopy[copyMap1][copyMap2];
+			};		
+		};
+	};	
+};
 			
 function move ()
 {
 	blockMove();
 	hide();
 	drawBlock();
-	checkCollision();
 };
 
 function blockMove()
 {
-	oorsprong.y = oorsprong.y + 1;
+	if (falling === true)
+	{
+		oorsprong.y = oorsprong.y + 1;
+	};
 };
 
 function hide ()
@@ -86,7 +141,7 @@ function hide ()
 		};
 	};
 };
-		
+	
 function drawBlock()
 {
 	if (oorsprong.y >= 2)
@@ -110,18 +165,28 @@ function drawBlock()
 			
 function checkCollision ()
 {
-	if (block[2][0] === 0 && block[2][1] === 0 && block[2][2] === 0)
+	if (map[oorsprong.y][oorsprong.x] === 2 || map[oorsprong.y][oorsprong.x + 1] === 2 || map[oorsprong.y][oorsprong.x + 2] === 2)
 	{
-		if (map[oorsprong.y][oorsprong.x] === 2 || map[oorsprong.y][oorsprong.x + 1] === 2 || map[oorsprong.y][oorsprong.x + 2] === 2)
+		falling = false;
+		makeSolid();	
+	};
+};
+
+function makeSolid()
+{
+	for (var makeSolid1 = 0; makeSolid1 < map.length; makeSolid1++)
+	{
+		for (var makeSolid2 = 0; makeSolid2 < map[makeSolid1].length; makeSolid2++) 
 		{
-			//make block 2 
-			console.log("hi1");
+			if (map[makeSolid1][makeSolid2] === 1)
+			{
+				map[makeSolid1][makeSolid2] = 2;
+			};		
 		};
 	};
-	
-	if (map[oorsprong.y + 1][oorsprong.x] === 2 || map[oorsprong.y + 1][oorsprong.x + 1] === 2 || map[oorsprong.y + 1][oorsprong.x + 2] === 2)
-	{
-		//make block 2  
-		console.log("hi2");
-	};
+};
+
+function clear ()
+{
+	ctx.clearRect(0,0,1000,5000);
 };
